@@ -38,7 +38,7 @@ class GestureConfig:
 class WaveConfig:
     enabled: bool = True
     signal: str = "palm"  # palm or wrist; keep the established default until evaluated
-    counter: str = "hysteresis"  # hysteresis or steps
+    counter: str = "steps"  # steps or hysteresis
     open_palm_score_threshold: float = 0.5
     require_open_palm: bool = True
     min_step: float = 0.08  # palm-size units, for the notebook-style step counter

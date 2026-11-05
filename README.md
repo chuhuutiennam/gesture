@@ -1,7 +1,7 @@
 # Gesture worker cho video
 
 Triển khai bằng bộ script `install/check/start/stop/restart/status/upgrade` tại
-`workers/ /scripts`: xem [hướng dẫn triển khai](docs/deployment.md).
+`workers/gesture/scripts`: xem [hướng dẫn triển khai](docs/deployment.md).
 Mặc định dùng gRPC `50053`, metrics `9102`, venv/PID/log riêng với segmentation.
 Các thao tác vận hành chạy trực tiếp bằng Bash; worker có JSON log xoay vòng,
 log theo stream/gesture và thống kê metrics định kỳ như segmentation.

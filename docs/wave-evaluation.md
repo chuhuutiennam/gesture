@@ -20,8 +20,9 @@ gesture tĩnh. `require_open_palm: true` vẫn là mặc định.
 - Một frame mất tay xóa lịch sử chuyển động của tay đó; giữ cooldown khi track
   còn sống. Track hết hạn hoặc đổi danh tính có detector mới.
 
-Mặc định vẫn chọn `palm/hysteresis`; chỉ đổi sau khi so sánh trên nhiều clip.
-Không tự chỉnh deployment đang chạy hoặc timeout inference.
+Mặc định chọn `palm/steps`. Có thể đặt `wave.counter: hysteresis` để dùng cách
+đếm cực trị. Deployment đã cài giữ YAML riêng; sửa config deployment và restart
+để áp dụng thay đổi.
 
 ## Capture một lần, so sánh trên cùng landmarks
 
@@ -88,30 +89,3 @@ Các test phủ positive/negative cùng chuỗi landmarks, FPS 10/15/30, thay k�
 tay, confidence độc lập với gesture tĩnh, phân biệt tín hiệu, cô lập stream và cấu
 hình sai. Test hiện có tiếp tục kiểm tra cooldown, metadata và nhiều tay.
 
-## Kết quả đối chứng ngày 2026-11-02
-
-Model `workers/checkpoint/gesture_recognizer.task`, CPU, VIDEO mode, toàn bộ
-`wave_hand.mp4`: 36 frame chọn ở 15 FPS, resize 320×240. Cùng một chuỗi landmarks
-được replay qua cả 12 nhánh; không chạy lại inference để ưu ái nhánh nào.
-
-| Nhánh | Open >=0.5 | Open >=0.6 | Không gate |
-| --- | ---: | ---: | ---: |
-| Palm / hysteresis | 0 | 0 | 0 |
-| Wrist / hysteresis | 0 | 0 | 0 |
-| Palm / steps | 1 | 0 | 1 |
-| Wrist / steps | 1 | 0 | 1 |
-
-Nhánh steps phát sự kiện ở media time 667 ms. Kết quả này hỗ trợ thử steps với
-confidence 0.5, chưa cho thấy wrist tốt hơn palm. Mặc định vẫn giữ palm/hysteresis;
-muốn thử cấu hình mới, đổi `wave.counter: steps` trong config thực tế, cập nhật
-package worker và restart theo hướng dẫn deployment.
-
-Control landmarks dựng từ mẫu Open_Palm trong clip: cả 12 nhánh cho 0 sự kiện ở
-giữ tay mở, đi một chiều, rung nhỏ, đổi tay và camera pan. Cả 12 nhánh có 1 false
-positive ở camera dao động ngang. Cần thêm tham chiếu nền/cơ thể để giải quyết
-trường hợp này; thay ngưỡng riêng bàn tay không bảo đảm phân biệt được.
-
-Artifacts lượt đo: `/tmp/media-ai-wave-landmarks.jsonl`,
-`/tmp/media-ai-wave-comparison.json`, `/tmp/media-ai-wave-controls.json`.
-Đây là một clip ngắn và controls tổng hợp; chưa phải benchmark precision/recall,
-chưa xác nhận LIVE_STREAM/gRPC/MF E2E sau thay đổi.

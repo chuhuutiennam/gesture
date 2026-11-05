@@ -30,7 +30,7 @@ gesture:
 wave:
   enabled: true
   signal: palm                      # palm | wrist; compare with wave_replay first
-  counter: hysteresis               # hysteresis | steps (notebook-style)
+  counter: steps                    # steps (notebook-style) | hysteresis
   open_palm_score_threshold: 0.5     # independent of static_score_threshold
   require_open_palm: true           # false only for measured ablation experiments
   min_step: 0.08                    # palm-size units; steps counter noise threshold
