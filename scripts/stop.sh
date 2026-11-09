@@ -185,6 +185,9 @@ stop_service() {
 
 # Execute the requested operation.
 parse_args "$@"
+if [[ -f "$APP_DIR/.gpu-server-deployment" ]]; then
+    die 'This deployment uses setup-gpu-server.sh. Use APP_DIR/start.sh or stop.sh; update by stopping gesture and re-running setup-gpu-server.sh from source.'
+fi
 if [[ "$DRY_RUN" == true ]]; then info "DRY-RUN: stop instance at $APP_DIR"; exit 0; fi
 if [[ ! -d "$APP_DIR" ]]; then info 'Not running'; exit 0; fi
 lock_service

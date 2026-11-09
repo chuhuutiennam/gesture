@@ -282,6 +282,9 @@ PY_INSTALL
 
 # Execute the requested operation.
 parse_args "$@"
+if [[ -f "$APP_DIR/.gpu-server-deployment" ]]; then
+    die 'This deployment uses setup-gpu-server.sh. Use APP_DIR/start.sh or stop.sh; update by stopping gesture and re-running setup-gpu-server.sh from source.'
+fi
 check_source
 if [[ "$DRY_RUN" == true ]]; then install_payload; exit 0; fi
 lock_service

@@ -1,10 +1,25 @@
 # Gesture worker cho video
 
-Triển khai bằng bộ script `install/check/start/stop/restart/status/upgrade` tại
-`workers/gesture/scripts`: xem [hướng dẫn triển khai](docs/deployment.md).
-Mặc định dùng gRPC `50053`, metrics `9102`, venv/PID/log riêng với segmentation.
-Các thao tác vận hành chạy trực tiếp bằng Bash; worker có JSON log xoay vòng,
-log theo stream/gesture và thống kê metrics định kỳ như segmentation.
+`gesture` là module worker độc lập, nằm cùng cấp RTPGW `media_ai_video` và worker
+segmentation `mediapipe`. Trong chế độ AI engine, bộ điều phối `video-ai-engine`
+gửi config và JPEG tới worker này cho task `gesture_recognition`; kết quả hands/
+reaction quay về engine → RTPGW → MF. MF thực hiện ghép hiệu ứng trong luồng tích
+hợp; các chức năng vẽ sticker ở module này phục vụ demo riêng. Bộ điều phối mở
+RPC tới worker đã chạy; mỗi RPC giữ trạng thái recognizer/tracking riêng.
+Xem [kiến trúc module và luồng điều khiển](../media_ai_video/docs/luong-dieu-khien-video-engine-streaming.md).
+
+Deploy server vật lý GPU theo cách Nemotron: source `/u01/ims/namcht/gesture`,
+APP_DIR `/u01/ims/mediapipe_gesture`; xem [setup server GPU](docs/server-setup-guide.md).
+Chạy `bash scripts/setup-gpu-server.sh`, sau đó `bash scripts/run-gpu-server.sh`.
+Setup tự cài wheels offline, cài package từ APP_DIR, tạo `APP_DIR/start.sh` và
+`stop.sh` để chạy nền; systemd là tùy chọn. Cập nhật bằng cách dừng gesture,
+chạy lại cùng script setup rồi chạy lại. Config/model/venv đã có được giữ nguyên;
+config mới dùng GPU, gRPC `127.0.0.1:50053`, metrics `9102`.
+
+Bộ `install/check/start/stop/restart/status/upgrade` cũ phục vụ layout phát triển
+trước đây: xem [deployment cũ](docs/deployment.md). Không dùng bộ này để quản lý
+deployment GPU do setup tạo; các script sẽ từ chối khi thấy marker deployment GPU.
+Worker có JSON log xoay vòng, log theo stream/gesture và thống kê metrics định kỳ.
 
 Nhận diện gesture tĩnh bằng MediaPipe và vẫy tay bằng landmark tracking, hỗ trợ
 nhiều tay và sticker hoạt hình bám theo từng tay. Worker nằm riêng với segmentation.
@@ -67,7 +82,7 @@ python -m workers.gesture.src.server \
   --config workers/gesture/etc/config.yaml --addr 127.0.0.1:50053
 ```
 
-Xem [server gRPC](docs/grpc.md), [E2E hai worker external](../../docs/video-external-e2e.md)
+Xem [server gRPC](docs/grpc.md), [E2E hai worker external](../media_ai_video/docs/video-external-e2e.md)
 cho video/PCAP qua RTPGW → hai model → MF → MP4. Package có entry point
 `mediapipe-gesture-server`. Model dùng chung ở workers/checkpoint.
 [Hướng dẫn demo](docs/usage.md) mô tả schema log, realtime replay và kiểm thử video riêng.

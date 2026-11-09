@@ -1,5 +1,10 @@
 # Triển khai và theo dõi dịch vụ gesture bằng Bash
 
+Tài liệu này dành cho layout phát triển trước đây. Server vật lý GPU dùng: `setup-gpu-server.sh` để
+cài mới/cập nhật, `run-gpu-server.sh` chạy foreground, `APP_DIR/start.sh` và
+`APP_DIR/stop.sh` chạy/dừng background. Không dùng install/upgrade/start/stop/
+restart/status cũ cho APP_DIR có marker `.gpu-server-deployment`.
+
 Các script tại `workers/gesture/scripts` quản lý trực tiếp bằng Bash, theo cách
 triển khai segmentation. Mỗi script tự chứa các hàm cần thiết, chạy độc lập,
 không source `_common.sh` hoặc gọi script khác để thực hiện thao tác. Worker dùng entry point

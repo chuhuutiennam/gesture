@@ -314,6 +314,9 @@ start_service() {
 
 # Execute the requested operation.
 parse_args "$@"
+if [[ -f "$APP_DIR/.gpu-server-deployment" ]]; then
+    die 'This deployment uses setup-gpu-server.sh. Use APP_DIR/start.sh or stop.sh; update by stopping gesture and re-running setup-gpu-server.sh from source.'
+fi
 if [[ "$DRY_RUN" == true ]]; then info "DRY-RUN: start $WORKER_BIN --config $CONFIG"; exit 0; fi
 lock_service
 start_service
